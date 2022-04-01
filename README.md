@@ -24,13 +24,12 @@ If you haven't already satisfied these dependencies on your system, install thes
 ```
 python hla_hed.py -h
 
-usage: hla_hed.py [-h] -d D -f F -i I -o O
-
 optional arguments:
   -h, --help  show this help message and exit
   -d D        Distance matrix for all amino acids (reference: DOI: 10.1126/science.185.4154.862)
   -f F        Amino acid sequences in fasta format
   -i I        Input file of tab-delimited with individual HLA typing
+  -p          Paired HED score
   -o O        Output file name
 
     Input HLA file format
@@ -44,12 +43,17 @@ optional arguments:
     Grantham R. Amino acid difference formula to help explain protein evolution. Science. 1974 Sep 6;185(4154):862-4. doi: 10.1126/science.185.4154.862. PMID: 4843792.
     Pierini F, Lenz TL. Divergent Allele Advantage at Human MHC Genes: Signatures of Past and Ongoing Selection. Mol Biol Evol. 2018 Sep 1;35(9):2145-2158. doi: 10.1093/molbev/msy116. PMID: 29893875; PMCID: PMC6106954.
     Chowell D, Krishna C, Pierini F, Makarov V, Rizvi NA, Kuo F, Morris LGT, Riaz N, Lenz TL, Chan TA. Evolutionary divergence of HLA class I genotype impacts efficacy of cancer immunotherapy. Nat Med. 2019 Nov;25(11):1715-1720. doi: 10.1038/s41591-019-0639-4. Epub 2019 Nov 7. PMID: 31700181; PMCID: PMC7938381.
+
 ```
 
 ### Example
 
 ```
 python hla_hed.py -d database/grantham_matrix.txt -f database/ABC_prot.fa -i example/test.txt -o example/test_hed.txt
+```
+
+```
+python hla_hed.py -d database/grantham_matrix.txt -f database/ABC_prot.fa -i example/test.txt -p -o example/test_hed_paired.txt
 ```
 
 ### References

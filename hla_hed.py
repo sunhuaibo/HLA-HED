@@ -10,7 +10,7 @@
 import pandas as pd
 from Bio import SeqIO
 from pathlib import Path
-from collections import Counter
+from itertools import combinations
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
 def get_opt():
@@ -32,6 +32,7 @@ def get_opt():
     parser.add_argument("-d", required=True, help="Distance matrix for all amino acids (reference: DOI: 10.1126/science.185.4154.862)")
     parser.add_argument("-f", required=True, help="Amino acid sequences in fasta format")
     parser.add_argument("-i", required=True, help="Input file of tab-delimited with individual HLA typing")
+    parser.add_argument("-p", action="store_true", help="Paired HED score")
     parser.add_argument("-o", required=True, help="Output file name")
 
     parse = parser.parse_args()
@@ -47,7 +48,7 @@ def read_fasta(infile):
     record = SeqIO.parse(infile, "fasta")
     seq_array = {seq.id: str(seq.seq) for seq in record}
     seq_len = [len(value) for value in seq_array.values()]
-    if len(Counter(seq_len)) != 1:
+    if len(set(seq_len)) != 1:
         raise Exception("Input sequences length is not equality")
     return(seq_array)
 
@@ -61,10 +62,10 @@ def read_aa(infile):
 def calculate_distange(hla1, hla2, sequence, distance):
     seq_hla1 = sequence.get(hla1, False)
     seq_hla2 = sequence.get(hla2, False)
-    seq_len = len(seq_hla1)
     if not seq_hla1 or not seq_hla2:
         return("NA")
     else:
+        seq_len = len(seq_hla1)
         dis = 0
         for i in range(seq_len):
             aa1 = seq_hla1[i]
@@ -85,31 +86,47 @@ def main():
 
     df = pd.read_csv(infile, header=0, sep="\t")
     
-    outheader = ["Sample","HED_A","HED_B","HED_C","Mean_HE"]
-    with open(outfile, "w") as fw:
-        fw.write("\t".join(outheader) + "\n")
-        for _, line in df.iterrows():
-            hla_a1 = line["A1"]
-            hla_a2 = line["A2"]
-            dis_hla_a = calculate_distange(hla_a1, hla_a2, seq_array, aa_pairwise_dis)
 
-            hla_b1 = line["B1"]
-            hla_b2 = line["B2"]
-            dis_hla_b = calculate_distange(hla_b1, hla_b2, seq_array, aa_pairwise_dis)
-            
-            hla_c1 = line["C1"]
-            hla_c2 = line["C2"]
-            dis_hla_c = calculate_distange(hla_c1, hla_c2, seq_array, aa_pairwise_dis)
+    if opt.p:
+        df2 = pd.melt(df, id_vars=["Sample"], value_vars=["A1", "A2", "B1","B2", "C1","C2"])
+        alleles = set(df2["value"].values.tolist())
+        alleles_pair = combinations(alleles, 2)
+    
+        outheader = ["Allele1","Allele2","HED"]
+        with open(outfile, "w") as fw:
+            fw.write("\t".join(outheader) + "\n")
+            for allele1, allele2 in alleles_pair:
+                dis_hla_pair = calculate_distange(allele1, allele2, seq_array, aa_pairwise_dis)
+                outline = [allele1, allele2, dis_hla_pair]
+                outline = [str(x) for x in outline]
 
-            if dis_hla_a == "NA" or dis_hla_b == "NA" or dis_hla_c == "NA":
-                dis_mean = "NA"
-            else:
-                dis_mean = (dis_hla_a + dis_hla_b + dis_hla_c) / 3
+                fw.write("\t".join(outline) + "\n")
+    else:
+        outheader = ["Sample","HED_A","HED_B","HED_C","Mean_HE"]
+        with open(outfile, "w") as fw:
+            fw.write("\t".join(outheader) + "\n")
+            for _, line in df.iterrows():
+                hla_a1 = line["A1"]
+                hla_a2 = line["A2"]
+                dis_hla_a = calculate_distange(hla_a1, hla_a2, seq_array, aa_pairwise_dis)
 
-            outline = [line["Sample"], dis_hla_a, dis_hla_b, dis_hla_c, dis_mean]
-            outline = [str(x) for x in outline]
+                hla_b1 = line["B1"]
+                hla_b2 = line["B2"]
+                dis_hla_b = calculate_distange(hla_b1, hla_b2, seq_array, aa_pairwise_dis)
+                
+                hla_c1 = line["C1"]
+                hla_c2 = line["C2"]
+                dis_hla_c = calculate_distange(hla_c1, hla_c2, seq_array, aa_pairwise_dis)
 
-            fw.write("\t".join(outline) + "\n")
+                if dis_hla_a == "NA" or dis_hla_b == "NA" or dis_hla_c == "NA":
+                    dis_mean = "NA"
+                else:
+                    dis_mean = (dis_hla_a + dis_hla_b + dis_hla_c) / 3
+
+                outline = [line["Sample"], dis_hla_a, dis_hla_b, dis_hla_c, dis_mean]
+                outline = [str(x) for x in outline]
+
+                fw.write("\t".join(outline) + "\n")
 
 if __name__ == "__main__":
     main()
