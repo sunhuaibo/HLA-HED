@@ -39,7 +39,7 @@ def get_opt():
 
 def check_file(infile):
     if not infile.exists:
-        raise(f"{str(infile)} file is not exist")
+        raise Exception(f"{str(infile)} file is not exist")
 
 def read_fasta(infile):
     infile = Path(infile)
@@ -48,7 +48,7 @@ def read_fasta(infile):
     seq_array = {seq.id: str(seq.seq) for seq in record}
     seq_len = [len(value) for value in seq_array.values()]
     if len(Counter(seq_len)) != 1:
-        raise("Input sequences length is not equality")
+        raise Exception("Input sequences length is not equality")
     return(seq_array)
 
 def read_aa(infile):
