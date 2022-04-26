@@ -7,6 +7,7 @@
 # date:   2022-03-31
 # =====================================
 
+import os
 import pandas as pd
 from Bio import SeqIO
 from pathlib import Path
@@ -28,12 +29,14 @@ def get_opt():
     Chowell D, Krishna C, Pierini F, Makarov V, Rizvi NA, Kuo F, Morris LGT, Riaz N, Lenz TL, Chan TA. Evolutionary divergence of HLA class I genotype impacts efficacy of cancer immunotherapy. Nat Med. 2019 Nov;25(11):1715-1720. doi: 10.1038/s41591-019-0639-4. Epub 2019 Nov 7. PMID: 31700181; PMCID: PMC7938381.
     
     """
+    
+    script = os.path.dirname(os.path.abspath(__file__))
     parser = ArgumentParser(formatter_class=RawDescriptionHelpFormatter, epilog=get_opt.__doc__)
-    parser.add_argument("-d", required=True, help="Distance matrix for all amino acids (reference: DOI: 10.1126/science.185.4154.862)")
-    parser.add_argument("-f", required=True, help="Amino acid sequences in fasta format")
-    parser.add_argument("-i", required=True, help="Input file of tab-delimited with individual HLA typing")
-    parser.add_argument("-p", action="store_true", help="Paired HED score")
-    parser.add_argument("-o", required=True, help="Output file name")
+    parser.add_argument("-d", default=f"{script}/database/grantham_matrix.txt", help="Distance matrix for all amino acids, default: database/grantham_matrix.txt. (reference: DOI: 10.1126/science.185.4154.862)")
+    parser.add_argument("-f", default=f"{script}/database/ABC_prot.fa", help="Amino acid sequences in fasta format, default: database/ABC_prot.fa.")
+    parser.add_argument("-i", required=True, help="Input file of tab-delimited with individual HLA typing.")
+    parser.add_argument("-p", action="store_true", help="Paired HED score.")
+    parser.add_argument("-o", required=True, help="Output file name.")
 
     parse = parser.parse_args()
     return(parse)
