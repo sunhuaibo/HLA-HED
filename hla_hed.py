@@ -8,7 +8,7 @@
 # =====================================
 
 import os
-from typing import Dict, List, NoReturn
+from typing import NoReturn
 import pandas as pd
 from Bio import SeqIO
 from pathlib import Path
