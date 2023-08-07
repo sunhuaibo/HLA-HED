@@ -56,6 +56,10 @@ python hla_hed.py -d database/grantham_matrix.txt -f database/ABC_prot.fa -i exa
 python hla_hed.py -d database/grantham_matrix.txt -f database/ABC_prot.fa -i example/test.txt -p -o example/test_hed_paired.txt
 ```
 
+### Citing
+Please cite this paper when using HLA-HED for your publications.
+> Jiang T, Jin Q, Wang J, Wu F, Chen J, Chen G, Huang Y, Chen J, Cheng Y, Wang Q, Pan Y, Zhou J, Shi J, Xu X, Lin L, Zhang W, Zhang Y, Liu Y, Fang Y, Feng J, Wang Z, Hu S, Fang J, Shu Y, Cui J, Hu Y, Yao W, Li X, Lin X, Wang R, Wang Y, Shi W, Feng G, Ni J, Mao B, Ren D, Sun H, Zhang H, Chen L, Zhou C, Ren S. HLA-I evolutionary divergence confers response to PD-1 blockade plus chemotherapy in untreated advanced non-small-cell lung cancer. Clin Cancer Res. 2023 Jul 14:CCR-23-0604. doi: 10.1158/1078-0432.CCR-23-0604. Epub ahead of print. PMID: 37449971.
+
 ### References
 
 1. Grantham R. Amino acid difference formula to help explain protein evolution. Science. 1974 Sep 6;185(4154):862-4. doi: 10.1126/science.185.4154.862. PMID: 4843792.
